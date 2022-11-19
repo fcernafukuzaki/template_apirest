@@ -42,43 +42,50 @@ def predict():
                 status=json_output_code,
                 data_dict=json_output_data_dict,
             )
-        else:
-            auth = headers.get("X-Api-Key")
-            if auth != environ.get("API_KEY"):
-                json_output_code = 401
-                json_output_data_dict = {"response": "Token no válido."}
-                json_output = json_response_format(
-                    success=False,
-                    message="Invalid Token",
-                    status=json_output_code,
-                    data_dict=json_output_data_dict,
-                )
-                return jsonify(json_output), json_output_code
-            if not data or "message" not in data:
-                json_output_code = 400
-                json_output_data_dict = {
-                    "response": "El campo 'message' es requerido."
-                }
-                json_output = json_response_format(
-                    success=False,
-                    message="Bad Request",
-                    status=json_output_code,
-                    data_dict=json_output_data_dict,
-                )
-            else:
-                execution_time = float(f"{(time.time() - initial_time):.06f}")
-                print(f"Execution time: {execution_time:.06f} seconds")
-                remote_addr = request.remote_addr
-                user_agent = obtener_header(headers)
+            return jsonify(json_output), json_output_code
 
-                json_output_code = 200
-                json_output_data_dict = {"response": outputs}
-                json_output = json_response_format(
-                    success=True,
-                    message="OK",
-                    status=json_output_code,
-                    data_dict=json_output_data_dict,
-                )
+        auth = headers.get("X-Api-Key")
+        if auth != environ.get("API_KEY"):
+            json_output_code = 401
+            json_output_data_dict = {"response": "Token no válido."}
+            json_output = json_response_format(
+                success=False,
+                message="Invalid Token",
+                status=json_output_code,
+                data_dict=json_output_data_dict,
+            )
+            return jsonify(json_output), json_output_code
+        
+        if not data or "message" not in data:
+            json_output_code = 400
+            json_output_data_dict = {
+                "response": "El campo 'message' es requerido."
+            }
+            json_output = json_response_format(
+                success=False,
+                message="Bad Request",
+                status=json_output_code,
+                data_dict=json_output_data_dict,
+            )
+            return jsonify(json_output), json_output_code
+
+        initial_time = time.time()
+
+        # TO DO
+
+        execution_time = float(f"{(time.time() - initial_time):.06f}")
+        print(f"Execution time: {execution_time:.06f} seconds")
+        remote_addr = request.remote_addr
+        user_agent = obtener_header(headers)
+
+        json_output_code = 200
+        json_output_data_dict = {"response": outputs}
+        json_output = json_response_format(
+            success=True,
+            message="OK",
+            status=json_output_code,
+            data_dict=json_output_data_dict,
+        )
     except Exception as exception_error:
         print(exception_error)
         json_output_code = 500
